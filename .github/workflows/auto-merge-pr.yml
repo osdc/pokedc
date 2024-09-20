@@ -22,7 +22,7 @@ jobs:
 
       - name: Get changed files
         run: |
-          FILES_CHANGED=$(git diff --name-only origin/main...HEAD)
+          FILES_CHANGED=$(git diff --name-only origin/main)
           echo "Changed files: $FILES_CHANGED"
           if echo "$FILES_CHANGED" | grep -qvE '^cdn/.*\.txt$'; then
             echo "Non .txt files or files outside /cdn directory detected."
