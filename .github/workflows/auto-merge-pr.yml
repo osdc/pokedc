@@ -8,9 +8,23 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.additions > 0 && github.event.pull_request.changed_files == github.event.pull_request.additions
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        run: |
+          git fetch origin main
+          FILES_CHANGED=$(git diff --name-only origin/main...HEAD)
+          echo "Changed files: $FILES_CHANGED"
+          if echo "$FILES_CHANGED" | grep -qvE '^cdn/.*\.txt$'; then
+            echo "Non .txt files or files outside /cdn directory detected."
+            exit 1
+          fi
+
       - name: Automerge PR
         uses: reitermarkus/automerge@v1
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
