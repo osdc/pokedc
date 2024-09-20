@@ -14,10 +14,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fetch all branches
-        run: git fetch --all
+        run: |
+          git fetch --all
+          git checkout -b pr-branch ${{ github.event.pull_request.head.sha }}
       - name: Check for new files only
         run: |
-          NEW_FILES=$(git diff --name-only --diff-filter=A origin/main...HEAD | grep -E '^cdn/.*\.txt$' || true)
+          NEW_FILES=$(git diff --name-only --diff-filter=A origin/main...pr-branch | grep -E '^cdn/.*\.txt$' || true)
           if [ -z "$NEW_FILES" ]; then
             echo "No new .txt files added in the cdn directory."
             exit 1
