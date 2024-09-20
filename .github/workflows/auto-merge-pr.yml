@@ -1,35 +1,34 @@
 name: Automerge PRs
-
 on:
   pull_request:
     branches:
       - main
     paths:
       - 'cdn/**/*.txt'
-
 jobs:
   automerge:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Fetch all branches
         run: git fetch --all
-
-      - name: Get changed files
+      - name: Check for new files only
         run: |
-          FILES_CHANGED=$(git diff --name-only origin/main)
-          echo "Changed files: $FILES_CHANGED"
-          if echo "$FILES_CHANGED" | grep -qvE '^cdn/.*\.txt$'; then
-            echo "Non .txt files or files outside /cdn directory detected."
+          NEW_FILES=$(git diff --name-only --diff-filter=A origin/main...HEAD | grep -E '^cdn/.*\.txt$' || true)
+          if [ -z "$NEW_FILES" ]; then
+            echo "No new .txt files added in the cdn directory."
             exit 1
           fi
-
+          echo "New files added: $NEW_FILES"
       - name: Automerge PR
-        uses: reitermarkus/automerge@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
+        uses: pascalgn/automerge-action@v0.15.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          MERGE_LABELS: ""
+          MERGE_METHOD: "squash"
+          MERGE_COMMIT_MESSAGE: "Automatically merged PR"
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
