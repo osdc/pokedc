@@ -15,9 +15,12 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all branches and commit history
 
-      - name: Fetch main branch
+      - name: Fetch all branches
         run: |
-          git fetch origin main  # Ensure 'main' branch is fetched
+          git fetch --all  # Ensure all branches are fetched
+          git checkout main  # Explicitly checkout the main branch
+          git pull origin main  # Ensure it's up to date
+          git checkout ${{ github.event.pull_request.head.ref }}  # Switch back to PR branch
 
       - name: Get changed files
         run: |
