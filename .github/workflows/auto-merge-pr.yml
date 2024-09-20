@@ -7,14 +7,24 @@ on:
 jobs:
   auto_merge:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout PR code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history so that we can do proper diffs
+
+      - name: Fetch main branch
+        run: |
+          git fetch origin main  # Ensure the main branch is available
 
       - name: Verify PR contents
         run: |
-          FILES_CHANGED=$(jq -r '.pull_request.head.sha' < "$GITHUB_EVENT_PATH" | xargs -I {} git diff --name-only origin/main..{})
+          # Get the list of files changed in the pull request
+          FILES_CHANGED=$(git diff --name-only origin/main...HEAD)
           echo "Files changed: $FILES_CHANGED"
+
+          # Check if any .txt files in the cdn/ folder were modified
           echo "$FILES_CHANGED" | grep -q "^cdn/.*\.txt$" || exit 1
 
       - name: Auto-merge the PR
