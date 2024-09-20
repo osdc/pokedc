@@ -1,49 +1,41 @@
-name: Auto Accept PR for Text Files
+name: Auto-Accept PR with .txt Files
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    paths:
+      - 'cdn/*.txt'
 
 jobs:
   auto_accept_pr:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the PR branch
       - name: Checkout PR branch
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch full history to allow comparison
+          fetch-depth: 0  # Fetch all branches and commit history
 
-      # Step 2: Fetch the main branch for comparison
       - name: Fetch main branch
         run: |
-          git fetch origin main  # Fetch the main branch for comparison
+          git fetch origin main  # Ensure 'main' branch is fetched
 
-      # Step 3: Get list of changed files in the PR
       - name: Get changed files
         run: |
-          FILES_CHANGED=$(git diff --name-only origin/main..${{ github.sha }})
+          # Compare the PR branch with the main branch
+          FILES_CHANGED=$(git diff --name-only origin/main..HEAD)
           echo "Changed files: $FILES_CHANGED"
-          echo "::set-output name=changed_files::$FILES_CHANGED"
-
-      # Step 4: Check if only .txt files were changed
-      - name: Check for only .txt files
-        run: |
-          if echo "$FILES_CHANGED" | grep -q -v '\.txt$'; then
-            echo "Non-txt files were changed. Failing the job."
+          # Check if any .txt files are present in the changed files
+          if echo "$FILES_CHANGED" | grep -qE '\.txt$'; then
+            echo "TXT files found."
+          else
+            echo "No TXT files found."
             exit 1
           fi
-          echo "Only .txt files were changed. Proceeding..."
 
-      # Step 5: Auto-approve the PR if all files are valid
-      - name: Auto-approve PR
-        uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-
-      # Step 6: Merge the PR if all conditions are met
       - name: Auto-merge PR
-        uses: pascalgn/automerge-action@v0.15.4
-        with:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Use your custom GH token
+        run: |
+          echo "Automatically merging PR"
+          gh pr merge ${{ github.event.pull_request.number }} --merge --repo ${{ github.repository }} --auth $GH_TOKEN
