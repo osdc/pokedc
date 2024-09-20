@@ -1,4 +1,0 @@
-Diana;
-ENRL9125;
-386;
-Python is awesome!;
