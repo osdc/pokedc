@@ -22,7 +22,7 @@ jobs:
         if: steps.check_files.outputs.new_cdn_txt == 'true'
         uses: pascalgn/automerge-action@v0.15.6
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
           MERGE_LABELS: ""
           MERGE_METHOD: "squash"
           MERGE_COMMIT_MESSAGE: "Automatically merged PR adding new .txt files to cdn"
