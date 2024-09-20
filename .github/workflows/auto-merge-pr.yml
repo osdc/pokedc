@@ -32,4 +32,4 @@ jobs:
       - name: Automerge PR
         uses: reitermarkus/automerge@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN }}
