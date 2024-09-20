@@ -1,4 +1,0 @@
-Fiona;
-ENRL9346;
-60;
-Just a random one-liner.;

@@ -1,4 +1,0 @@
-Alice;
-ENRL1986;
-24;
-Just a random one-liner.;

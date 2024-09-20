@@ -1,4 +1,0 @@
-Edward;
-ENRL9125;
-547;
-This is a test.;
