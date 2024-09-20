@@ -1,32 +1,28 @@
-name: Automerge PRs
+name: Automerge New CDN Files
 on:
   pull_request:
-    branches:
-      - main
-    paths:
-      - 'cdn/**/*.txt'
+    types: [opened, synchronize, reopened, ready_for_review]
+
 jobs:
-  automerge:
+  check-and-merge:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Check for new files
+        id: check_files
+        uses: dorny/paths-filter@v2
         with:
-          fetch-depth: 0
-      - name: Fetch main branch
-        run: git fetch origin main:main
-      - name: Check changed files
-        run: |
-          PR_SHA=$(jq -r '.pull_request.head.sha' < "$GITHUB_EVENT_PATH")
-          FILES_CHANGED=$(git diff --name-only main..$PR_SHA)
-          echo "Files changed: $FILES_CHANGED"
-          echo "$FILES_CHANGED" | grep -q "^cdn/.*\.txt$" || exit 1
+          filters: |
+            new_cdn_txt:
+              - added: 'cdn/**/*.txt'
+
       - name: Automerge PR
+        if: steps.check_files.outputs.new_cdn_txt == 'true'
         uses: pascalgn/automerge-action@v0.15.6
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: ""
           MERGE_METHOD: "squash"
-          MERGE_COMMIT_MESSAGE: "Automatically merged PR"
-          MERGE_RETRIES: "6"
-          MERGE_RETRY_SLEEP: "10000"
+          MERGE_COMMIT_MESSAGE: "Automatically merged PR adding new .txt files to cdn"
