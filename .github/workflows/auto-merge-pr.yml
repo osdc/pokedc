@@ -29,6 +29,7 @@ jobs:
               sort: 'updated',
               direction: 'desc',
             });
+            console.log("data is ",pr);
             // Filter PRs that add a single .txt file in the /cdn directory
             const validPRs = pullRequests.filter(pr => {
               return pr.files_url && pr.files.length === 1 && pr.files[0].filename.match(/^cdn\/.*\.txt$/);
