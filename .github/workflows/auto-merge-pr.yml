@@ -1,55 +1,28 @@
-name: Combine and Automerge PRs
-
+name: Automerge New CDN Files
 on:
-  workflow_dispatch:  # Allows manual triggering of the workflow
-
-permissions:
-  contents: write
-  pull-requests: write
-  checks: read
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  combine-and-automerge:
+  check-and-merge:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: List Pull Requests Ready for Batch Merge
-        id: pr_list
-        uses: actions/github-script@v6
+      - name: Check for new files
+        id: check_files
+        uses: dorny/paths-filter@v2
         with:
-          github-token: ${{ secrets.GH_TOKEN }}  # Using GH_TOKEN instead of GITHUB_TOKEN
-          script: |
-            const { data: pullRequests } = await github.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              sort: 'updated',
-              direction: 'desc',
-            });
-            console.log("data is ",pr);
-            // Filter PRs that add a single .txt file in the /cdn directory
-            const validPRs = pullRequests.filter(pr => {
-              return pr.files_url && pr.files.length === 1 && pr.files[0].filename.match(/^cdn\/.*\.txt$/);
-            });
-            return { pr_numbers: validPRs.map(pr => pr.number) };
+          filters: |
+            new_cdn_txt:
+              - added: 'cdn/**/*.txt'
 
-      - name: Combine PRs
-        if: steps.pr_list.outputs.pr_numbers
-        uses: github/combine-prs@v5.1.0
-        with:
-          base: 'main'  # Specify the base branch for the combined PR
-          head: 'combined-prs'  # The new branch for the combined PR
-          title: 'Combined PRs adding .txt files to /cdn'
-          body: 'This PR combines all PRs that add .txt files to the /cdn directory.'
-
-      - name: Automerge Combined PR
-        if: success()
+      - name: Automerge PR
+        if: steps.check_files.outputs.new_cdn_txt == 'true'
         uses: pascalgn/automerge-action@v0.15.6
         env:
-          GH_TOKEN: "${{ secrets.GH_TOKEN }}"  # Using GH_TOKEN here as well
-        with:
-          merge_method: squash
-          merge_commit_message: "Automatically merged combined PR adding new .txt files to /cdn"
+          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+          MERGE_LABELS: ""
+          MERGE_METHOD: "squash"
+          MERGE_COMMIT_MESSAGE: "Automatically merged PR adding new .txt files to cdn"
