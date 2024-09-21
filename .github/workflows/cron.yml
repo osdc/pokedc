@@ -1,19 +1,53 @@
-name: Combine PRs
+name: Combine and Automerge PRs
 
 on:
-  workflow_dispatch: # allows you to manually trigger the workflow
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
-# The minimum permissions required to run this Action
 permissions:
   contents: write
   pull-requests: write
   checks: read
 
 jobs:
-  combine-prs:
+  combine-and-automerge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: combine-prs
-        id: combine-prs
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: List Pull Requests Ready for Batch Merge
+        id: pr_list
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: pullRequests } = await github.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'updated',
+              direction: 'desc',
+            });
+            // Filter PRs that add a single .txt file in the /cdn directory
+            const validPRs = pullRequests.filter(pr => {
+              return pr.files_url && pr.files.length === 1 && pr.files[0].filename.match(/^cdn\/.*\.txt$/);
+            });
+            return validPRs.map(pr => pr.number);
+
+      - name: Combine PRs
+        if: steps.pr_list.outputs.pr_numbers
         uses: github/combine-prs@v5.1.0
+        with:
+          base: 'main'  # Specify the base branch for the combined PR
+          head: 'combined-prs'  # The new branch for the combined PR
+          title: 'Combined PRs adding .txt files to /cdn'
+          body: 'This PR combines all PRs that add .txt files to the /cdn directory.'
+
+      - name: Automerge Combined PR
+        if: success()
+        uses: pascalgn/automerge-action@v0.15.6
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          merge_method: squash
+          merge_commit_message: "Automatically merged combined PR adding new .txt files to /cdn"
