@@ -1,28 +1,45 @@
-name: Automerge New CDN Files
+name: Automerge Batches
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: '*/5 * * * *'  # Run every 5 minutes
 
 jobs:
-  check-and-merge:
+  batch-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Check for new files
-        id: check_files
-        uses: dorny/paths-filter@v2
+      - name: List Pull Requests Ready for Merge
+        id: pr_list
+        uses: actions/github-script@v6
         with:
-          filters: |
-            new_cdn_txt:
-              - added: 'cdn/**/*.txt'
+          script: |
+            const { data: pullRequests } = await github.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              sort: 'updated',
+              direction: 'desc',
+            });
+            const prNumbers = pullRequests
+              .filter(pr => pr.labels.some(label => label.name === 'automerge'))
+              .map(pr => pr.number);
 
-      - name: Automerge PR
-        if: steps.check_files.outputs.new_cdn_txt == 'true'
-        uses: pascalgn/automerge-action@v0.15.6
-        env:
-          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
-          MERGE_LABELS: ""
-          MERGE_METHOD: "squash"
-          MERGE_COMMIT_MESSAGE: "Automatically merged PR adding new .txt files to cdn"
+            if (prNumbers.length > 0) {
+              return prNumbers.join(',');
+            } else {
+              return '';
+            }
+
+      - name: Merge PRs
+        if: steps.pr_list.outputs.result != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prNumbers = ${{ steps.pr_list.outputs.result }}.split(',');
+            for (const pr of prNumbers) {
+              await github.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr,
+                merge_method: 'squash',
+              });
+            }
