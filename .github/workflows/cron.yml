@@ -47,7 +47,7 @@ jobs:
         if: success()
         uses: pascalgn/automerge-action@v0.15.6
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
         with:
           merge_method: squash
           merge_commit_message: "Automatically merged combined PR adding new .txt files to /cdn"
