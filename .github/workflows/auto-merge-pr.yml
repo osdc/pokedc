@@ -1,6 +1,6 @@
 name: Automerge New CDN Files
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          # Ensure to fetch the PR's branch
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Check for new files
         id: check_files
@@ -22,7 +26,7 @@ jobs:
         if: steps.check_files.outputs.new_cdn_txt == 'true'
         uses: pascalgn/automerge-action@v0.15.6
         env:
-          GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: ""
           MERGE_METHOD: "squash"
           MERGE_COMMIT_MESSAGE: "Automatically merged PR adding new .txt files to cdn"
