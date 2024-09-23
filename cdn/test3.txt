@@ -1,4 +1,0 @@
-mr tester;
-712;
-76;
-Im just testing things mane;
