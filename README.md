@@ -1,5 +1,5 @@
 # Pokedc
-Add your pokemon entries here for them to be visible on [pokedex.osdc.dev](https://pokedex.osdc.dev/)!
+Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https://pokedex.osdc.dev/)!
 
 ## How to add entry:
 1. Fork the repository by clicking on the fork button up top.
@@ -15,7 +15,7 @@ Add your pokemon entries here for them to be visible on [pokedex.osdc.dev](https
     ### File Structure of txt file:
     - your_name;
     - your_enrol_no;
-    - A number for your pokemon (between 1 and 600);
+    - A number for your Pokemon (between 1 and 600);
     - Text you want to display;
         
         (Add a semicolon after each line)
@@ -34,12 +34,31 @@ Add your pokemon entries here for them to be visible on [pokedex.osdc.dev](https
     ```
     git add your_enrol_no.txt
     ```
-6. Commit your changes:
+6. Config your user for this repo:
+   ```
+   git config user.email 'example@abc.xyz'
+   git config user.name 'your-name'
+   ```
+7. Commit your changes:
     ```
-    git commit -m "Add new pokemon entry"
+    git commit -m "Add new Pokemon entry"
     ```
-7. Push Changes to github:
+8. Create a temporary Personal access token :<br>
+   Step 1: Go to the menu button on the top-right of GitHub. <br>
+   Step 2: Settings -> Developer Settings -> Personal Access Tokens -> Tokens (classic)<br>
+   Step 3: Generate New Token (classic)<br>
+   Step 4: Tick [✔️] the Repo option.<br>
+   Step 5: generate the token and copy it (don't close the window with the token yet)
+      
+10. Push Changes to github:
     ```
     git push origin main
     ```
-8. Open a pull request: Check if everything has gone right so far and open a pull request!
+11. If a Windows GitHub login pop-up appears :
+        proceed with the sign-in
+    Else (if it asks for a username, password) :
+        enter your GitHub username.
+        enter the token you generated in {step 8} for the password.
+    
+13. Open a pull request: Check if everything has gone right so far and open a pull request!
+    
