@@ -44,10 +44,14 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
     git commit -m "Add new Pokemon entry"
     ```
 8. Now create your ssh token by generating using this command:
+   ```
    ssh-keygen -t ed25519 -C "your_email@example.com"
+    ```
    Go To Your SSH Path (cd.\.ssh\) must be in users->ssh folder
    Now fetch the key in terminal by using the command:
-                      cat id_ed25519.pub
+   ```
+        cat id_ed25519.pub
+    ```
    Now Open github -> settings -> ssh & gpg ->add-key -> paste the key
       
 10. Push Changes to github:
@@ -55,17 +59,22 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
     Fork and clone commit changes if you haven't
     ```
     Add the remote path to your cloned repo:
-       git remote add origin git@github.com:name/pokedc.git
+    ```
+    git remote add origin git@github.com:name/pokedc.git
+    ```
     Update the changes using:
+    ```
        git fetch origin
-    
+    ```
 12. If a Windows GitHub login pop-up appears :
         proceed with the sign-in
     Else (if it asks for a username, password) :
         enter your GitHub username.
         enter the token you generated in {step 8} for the password.
 13. Now push the changes:
-            git push origin main
+    ```
+        git push origin main
+    ```
     
 14. Open a pull request: Check if everything has gone right so far and open a pull request!
     
