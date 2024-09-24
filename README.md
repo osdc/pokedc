@@ -22,13 +22,9 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
 
         eg:
      ```
-        
         Arnav;
-
         23104173;
-
         151;
-
         Hello world!;
     ```
 5. Stage your added file:
