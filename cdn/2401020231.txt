@@ -1,0 +1,4 @@
+Tanishq Pandey;
+2401020231;
+256;
+osdc > knuth;
