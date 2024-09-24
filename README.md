@@ -21,6 +21,7 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
         (Add a semicolon after each line)
 
         eg:
+     ```
         
         Arnav;
 
@@ -29,7 +30,7 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
         151;
 
         Hello world!;
-
+    ```
 5. Stage your added file:
     ```
     git add your_enrol_no.txt
