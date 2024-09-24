@@ -69,7 +69,7 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
 12. If a Windows GitHub login pop-up appears :
         proceed with the sign-in
     Else (if it asks for a username, password) :
-        enter your GitHub username.
+        enter your GitHub username,password
 13. Now push the changes:
     ```
         git push origin main
