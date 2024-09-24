@@ -70,7 +70,6 @@ Add your Pokemon entries here for them to be visible on [pokedex.osdc.dev](https
         proceed with the sign-in
     Else (if it asks for a username, password) :
         enter your GitHub username.
-        enter the token you generated in {step 8} for the password.
 13. Now push the changes:
     ```
         git push origin main
