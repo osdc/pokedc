@@ -1,4 +1,4 @@
 Ambar;
-Enrollment Number-2401030223
-225;
+2401030223;
+25;
 Am I Cooked!?;
