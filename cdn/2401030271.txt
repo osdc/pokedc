@@ -1,0 +1,4 @@
+Samman;
+2401030271;
+73;
+{function repeat{} { eat(): code(): contest(): sleep(): repeat(): }} (): ;
